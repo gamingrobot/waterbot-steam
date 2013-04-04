@@ -1,0 +1,26 @@
+<config>
+    <!-- error, warning, info, debug, manager -->
+    <logger>
+        <level value="debug" />
+        <dir value="logs" />
+    </logger>
+    <!-- order matters, top loaded first -->
+    <plugins>
+        <plugin name="config" />
+        <plugin name="commandmanager" />
+        <plugin name="base" />
+        <plugin name="isteam" />
+    </plugins>
+    <!-- subconfigs for stuff that is changed between boxes
+        for things that are changed rarely use the plugin.xml -->
+    <subconfigs>
+        <steamcfg>
+            <username value="username" />
+            <password value="password" />
+            <superuser value="STEAM_0:0:2342453" />
+            <chatrooms>
+                <room name="roomname" id="123324892378972234" />
+            </chatrooms>
+        </steamcfg>
+    </subconfigs>
+</config>
