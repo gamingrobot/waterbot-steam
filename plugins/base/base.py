@@ -8,7 +8,6 @@ class Base:
         manager.commandmanager.registerCommand("plugins", self.pluginsCommand, perm=Perm.Owner)
         manager.commandmanager.registerCommand("restart", self.restartBot, perm=Perm.Super)
         manager.commandmanager.registerCommand("echo", self.echoCommand)
-        Test()
 
     def aboutCommand(self, command, args):
         return "Dihydrogen Monoxide Bot, Version %s" % (manager.getVersion())
