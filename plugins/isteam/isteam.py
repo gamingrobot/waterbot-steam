@@ -58,14 +58,14 @@ class InterfaceSteam:
         #t.daemon = True  # thread dies with the program
         steamthread.start()
 
-    def joinChatCommand(self, command, args):
+    def joinChatCommand(self, command, args, source):
         if len(args) >= 1:
             chatroom = SteamID(int(args[0]))
             log.info("Connecting to room %s" % chatroom)
             self.steamFriends.JoinChat(chatroom)
             return "Connected to %s" % args[0]
 
-    def leaveChatCommand(self, command, args):
+    def leaveChatCommand(self, command, args, source):
         if len(args) >= 1:
             try:
                 chatroom = SteamID(int(args[0]))
@@ -120,7 +120,7 @@ class InterfaceSteam:
                     chatperm = Perm.Super
                 else:
                     chatperm = Perm.User
-                source = [callback.ChatterID, chatperm]
+                source = {'ChatterID': callback.ChatterID, 'ChatterRank': chatperm, 'ChatRoomID': callback.ChatRoomID}
                 response = manager.commandmanager.processCommand(source, message[1:])
                 if isinstance(response, tuple):
                     msgresponse = response[0]

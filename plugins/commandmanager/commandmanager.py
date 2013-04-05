@@ -9,7 +9,7 @@ class CommandManager:
         self._plugins = {}
         self.registerCommand("help", self.listCommands)
 
-    def listCommands(self, command, args):
+    def listCommands(self, command, args, source):
         ret = "Available Commands:\n"
         ret += ", ".join(self._commands.keys())
         return ret, self._commands.keys()
@@ -43,14 +43,14 @@ class CommandManager:
             for command in self._plugins[plugin]:
                 self.unRegisterCommand(command)
 
-    def fireCommand(self, command, args):
+    def fireCommand(self, command, args, source):
         if command in self._commands:
-            return self._commands[command]["callback"](command, args)
+            return self._commands[command]["callback"](command, args, source)
         else:
             return False
 
     def processCommand(self, source, data):
-        src = "%s, %s" % (source[0], source[1])
+        src = "%s, %s, %s" % (source['ChatterID'], source['ChatterRank'], source['ChatRoomID'])
         prodata = data
         if not isinstance(data, list):
             prodata = self._processCommandArguments(data)
@@ -74,8 +74,8 @@ class CommandManager:
             log.info("command from", src, "COMMAND", cmd, "ARGS", args)
             result = False
             if cmd in self._commands:
-                if self._commands[cmd]["perm"] <= source[1]:
-                    result = self.fireCommand(cmd, args)
+                if self._commands[cmd]["perm"] <= source['ChatterRank']:
+                    result = self.fireCommand(cmd, args, source)
             return result
 
     def _processCommandArguments(self, arguments):
