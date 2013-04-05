@@ -24,8 +24,6 @@ class WatchDog:
 
     def _openBot(self):
         self.bot = subprocess.Popen(["ipy", '-X:Frames', '-u', 'bot.py', config], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, close_fds=ON_POSIX)
-        #mono version
-        #self.bot = subprocess.Popen(["mono", "/usr/local/lib/ironpython/ipy.exe", '-X:Frames', '-u', 'bot.py', config], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, close_fds=ON_POSIX)
 
     def _watcher(self):
         while True:
