@@ -21,7 +21,7 @@ class Base:
     def restartBot(self, command, args):
         t = Timer(1, manager.restartBot)
         t.start()
-        return "brb restarting", True
+        return "Wut", True
 
     def echoCommand(self, command, args):
         return " ".join(args), args
