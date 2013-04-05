@@ -26,7 +26,7 @@ class WatchDog:
     def _exec_shell(self, command):
         """Execute a shell command and get the output."""
         command = shlex.split(command)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         output = process.communicate()[0]
         exit_code = process.wait()
         print output
