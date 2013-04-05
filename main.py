@@ -1,7 +1,8 @@
 import sys
 import subprocess
-import shlex
+import os
 import time
+import git
 try:
     from Queue import Queue, Empty
 except ImportError:
@@ -23,19 +24,8 @@ class WatchDog:
         self._updateBot()
         self._openBot()
 
-    def _exec_shell(self, command):
-        """Execute a shell command and get the output."""
-        command = shlex.split(command)
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output = process.communicate()[0]
-        exit_code = process.wait()
-        print output
-        if output:
-            output = output[:-1]  # strip newline if command returned anything
-        return output
-
     def _updateBot(self):
-        dry_fetch = self._exec_shell("git fetch")
+        """dry_fetch = self._exec_shell("git fetch")
         last_commit = self._exec_shell("git log -n 1 --pretty=\"%ar\"")
         print "dry fetch" + dry_fetch
         if dry_fetch != "":  # new changes
@@ -52,8 +42,10 @@ class WatchDog:
                 print "Ignoring."
 
         else:  # no new changes
-            print "No new changes. Last commit was %s." % last_commit
+            print "No new changes. Last commit was %s." % last_commit"""
 
+        g = git.cmd.Git(os.getcwd())
+        g.pull()
 
     def _openBot(self):
         self.bot = subprocess.Popen(["ipy", '-X:Frames', '-u', 'bot.py', config], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, close_fds=ON_POSIX)
