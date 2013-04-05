@@ -3,7 +3,7 @@ import sys
 import os
 import importlib
 
-bot_version = "1.0.1"
+bot_version = "1.0.2"
 
 
 class Manager(object):
