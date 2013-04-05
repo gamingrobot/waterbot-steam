@@ -19,7 +19,7 @@ class InterfaceSteam:
         self.password = manager.config.getValue(steamcfg, 'password')
         self.superuser = manager.config.getValue(steamcfg, 'superuser')
 
-        manager.commandmanager.registerCommand("joinchat", self.joinChatCommmand, perm=Perm.Super)
+        manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
 
         self.chatrooms = {}
