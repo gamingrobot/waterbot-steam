@@ -23,7 +23,7 @@ class WatchDog:
         self._updateBot()
         self._openBot()
 
-    def _exec_shell(command):
+    def _exec_shell(self, command):
         """Execute a shell command and get the output."""
         command = shlex.split(command)
         result = subprocess.check_output(command, stderr=subprocess.STDOUT)
