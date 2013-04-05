@@ -26,7 +26,6 @@ class WatchDog:
 
     def _updateBot(self):
         g = git.cmd.Git(os.getcwd())
-        print g.fetch()
         print g.pull()
 
     def _openBot(self):
