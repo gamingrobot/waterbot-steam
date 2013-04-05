@@ -63,9 +63,16 @@ class InterfaceSteam:
             chatroom = SteamID(int(args[0]))
             log.info("Connecting to room %s" % chatroom)
             self.steamFriends.JoinChat(chatroom)
+            return "Connected to %s" % args[0]
 
     def leaveChatCommand(self, command, args):
-        pass
+        if len(args) >= 1:
+            try:
+                chatroom = SteamID(int(args[0]))
+                log.info("Disconnecting from room %s" % chatroom)
+                self.steamFriends.LeaveChat(chatroom)
+            except:
+                return "I'm not currently there"
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
