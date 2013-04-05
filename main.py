@@ -26,21 +26,14 @@ class WatchDog:
     def _exec_shell(self, command):
         """Execute a shell command and get the output."""
         command = shlex.split(command)
-        result = subprocess.check_output(command, stderr=subprocess.STDOUT)
+        result = subprocess.Popen(command, stderr=subprocess.STDOUT)
         if result:
             result = result[:-1]  # strip newline if command returned anything
         return result
 
     def _updateBot(self):
-        try:
-            dry_fetch = self._exec_shell("git fetch --dry-run")
-        except subprocess.CalledProcessError:
-            print "Cannot fetch; do you have a remote repository configured correctly?"
-            return
-        try:
-            last_commit = self._exec_shell("git log -n 1 --pretty=\"%ar\"")
-        except subprocess.CalledProcessError:
-            last_commit = "never"  # couldn't get a log, so no commits
+        dry_fetch = self._exec_shell("git fetch --dry-run")
+        last_commit = self._exec_shell("git log -n 1 --pretty=\"%ar\"")
 
         if not dry_fetch:  # no new changes to pull
             print "No new changes. Last commit was %s." % last_commit
