@@ -72,7 +72,7 @@ class CommandManager:
 
             #fire command
             log.info("command from", src, "COMMAND", cmd, "ARGS", args)
-            result = ""
+            result = False
             if cmd in self._commands:
                 if self._commands[cmd]["perm"] <= source[1]:
                     result = self.fireCommand(cmd, args)

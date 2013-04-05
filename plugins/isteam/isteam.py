@@ -10,6 +10,7 @@ from bin.shared.perms import Perm
 
 class InterfaceSteam:
     def __init__(self, xml):
+        self.chatcallbacks = []
         #get steamcfg from main config
         steamcfg = manager.config.getConfig('steamcfg')
         #username
@@ -17,6 +18,9 @@ class InterfaceSteam:
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
         self.superuser = manager.config.getValue(steamcfg, 'superuser')
+
+        manager.commandmanager.registerCommand("joinchat", self.joinChatCommmand, perm=Perm.Super)
+        manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
 
         self.chatrooms = {}
 
@@ -53,6 +57,15 @@ class InterfaceSteam:
         steamthread = Thread(target=self._steamloop, args=[callbackManager])
         #t.daemon = True  # thread dies with the program
         steamthread.start()
+
+    def joinChatCommand(self, command, args):
+        if len(args) >= 1:
+            chatroom = SteamID(int(args[0]))
+            log.info("Connecting to room %s" % chatroom)
+            self.steamFriends.JoinChat(chatroom)
+
+    def leaveChatCommand(self, command, args):
+        pass
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
@@ -106,11 +119,27 @@ class InterfaceSteam:
                     msgresponse = response[0]
                 else:
                     msgresponse = response
-                msgresponse = msgresponse.strip()
-                if msgresponse != "":
-                    self.steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, str(msgresponse))
-        except:
-            pass
+
+                if msgresponse is False or msgresponse is None:
+                    self._fireChatCallbacks(callback)
+                else:
+                    msgresponse = msgresponse.strip()
+                    if msgresponse != "":
+                        self.steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, str(msgresponse))
+            else:
+                self._fireChatCallbacks(callback)
+        except Exception as e:
+            log.error(e)
+
+    def _fireChatCallbacks(self, chatmsg):
+        for callback in self.chatcallbacks:
+            callback(chatmsg)
+
+    def registerChatCallback(self, callback):
+        self.chatcallbacks.append(callback)
+
+    def sendChatMessage(self, room, msg):
+        self.steamFriends.SendChatRoomMessage(room, EChatEntryType.ChatMsg, str(msg))
 
     def destroy(self, callback):
         self.steamUser.LogOff()
