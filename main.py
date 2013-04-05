@@ -21,7 +21,9 @@ class WatchDog:
         self._watcher()
 
     def _restartBot(self):
+        print "-----------------------------"
         self._updateBot()
+        print "-----------------------------\n"
         self._openBot()
 
     def _updateBot(self):
@@ -45,7 +47,6 @@ class WatchDog:
                 status = self.bot.poll()
                 if status is not None:
                     time.sleep(2)
-                    print "-----------------------------"
                     self._restartBot()
                 #thread sleep
                 time.sleep(0.02)
