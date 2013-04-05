@@ -26,10 +26,12 @@ class WatchDog:
     def _exec_shell(self, command):
         """Execute a shell command and get the output."""
         command = shlex.split(command)
-        result = subprocess.Popen(command, stderr=subprocess.STDOUT)
-        if result:
-            result = result[:-1]  # strip newline if command returned anything
-        return result
+        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        output = process.communicate()[0]
+        exit_code = process.wait()
+        if output:
+            output = output[:-1]  # strip newline if command returned anything
+        return output
 
     def _updateBot(self):
         dry_fetch = self._exec_shell("git fetch --dry-run")
