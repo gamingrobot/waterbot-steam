@@ -117,7 +117,7 @@ class Manager(object):
     def getPluginsInfo(self):
         returnlist = []
         for plugin in self._plugins_info.keys():
-            tempstr = '%-20s %-4s' % (self._plugins_info[plugin]['pluginname'], self._plugins_info[plugin]['author'])
+            tempstr = '%s %s' % (self._plugins_info[plugin]['pluginname'], self._plugins_info[plugin]['author'])
             returnlist.append(tempstr)
         return returnlist
 
