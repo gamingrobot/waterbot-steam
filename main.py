@@ -25,7 +25,8 @@ class WatchDog:
 
     def _exec_shell(self, command):
         """Execute a shell command and get the output."""
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        command = shlex.split(command)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE)
         output = process.communicate()[0]
         exit_code = process.wait()
         print output
@@ -34,7 +35,7 @@ class WatchDog:
         return output
 
     def _updateBot(self):
-        dry_fetch = self._exec_shell("git fetch --dry-run")
+        dry_fetch = self._exec_shell("git fetch")
         last_commit = self._exec_shell("git log -n 1 --pretty=\"%ar\"")
         print "dry fetch" + dry_fetch
         if dry_fetch != "":  # new changes
