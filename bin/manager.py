@@ -18,6 +18,7 @@ class Manager(object):
         self._stopstate = None
 
         log.info("WaterBot Started")
+        raise
 
     def loadPlugins(self):
         elemPlugins = self._config.find('plugins')
