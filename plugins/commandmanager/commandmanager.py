@@ -50,7 +50,7 @@ class CommandManager:
             return False
 
     def processCommand(self, source, data):
-        src = "%s, %s, %s" % (source['ChatterID'], source['ChatterRank'], source['ChatRoomID'])
+        src = "%s, %s" % (source['SourceID'], source['SourceRank'])
         prodata = data
         if not isinstance(data, list):
             prodata = self._processCommandArguments(data)

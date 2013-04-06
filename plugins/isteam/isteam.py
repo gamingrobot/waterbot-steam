@@ -142,7 +142,7 @@ class InterfaceSteam:
             self._processCommand(source, message)
 
     def _processCommand(self, source, message):
-        log.info(source['SourceID'], message)
+        #log.info(source['SourceID'], message)
         messagesplit = message.strip().split(" ")
         try:
             if messagesplit[0] == "wb":
