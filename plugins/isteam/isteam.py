@@ -86,8 +86,9 @@ class InterfaceSteam:
             callbackManager.RunWaitCallbacks(System.TimeSpan.FromSeconds(1))
 
     #log happend
-    def logCallback(self, logdata):
-        self.steamFriends.SendChatMessage(SteamID(str(self.superuser)), EChatEntryType.ChatMsg, logdata)
+    def logCallback(self, logdata, level):
+        if level >= log.logtype.warning:
+            self.steamFriends.SendChatMessage(SteamID(str(self.superuser)), EChatEntryType.ChatMsg, logdata)
 
     #callbacks
     def OnConnected(self, callback):
@@ -162,7 +163,7 @@ class InterfaceSteam:
             else:
                 self._fireChatCallbacks(source, message)
         except Exception:
-            log.error("Error in ISteam Command \n %s" % traceback.format_exc())
+            log.error("Error while processing command \n %s" % traceback.format_exc())
 
     def _fireChatCallbacks(self, source, chatmsg):
         for callback in self.chatcallbacks:
