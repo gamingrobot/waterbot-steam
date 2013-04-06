@@ -84,9 +84,6 @@ class Manager(object):
         except IOError:
             log.error("Plugin", plugin, "needs a plugin.xml")
             raise IOError("Plugin " + plugin + " needs plugin.xml")
-        #set some info
-        plugininfo = plugincfg.find('info')
-        self._plugins_info[plugin] = {"pluginname": plugininfo.get('name'), "author": plugininfo.get('author')}
         #instance plugin
         try:
             if hasattr(sys.modules[base], "main_class"):
@@ -100,6 +97,9 @@ class Manager(object):
             else:
                 log.error("Plugin", plugin, "overides a manager object, please pick a diffrent name")
                 raise StandardError("Plugin " + plugin + " overides a manager object")
+                    #set some info
+            plugininfo = plugincfg.find('info')
+            self._plugins_info[plugin] = {"pluginname": plugininfo.get('name'), "author": plugininfo.get('author')}
             self._plugins[plugin] = inst
         except Exception:
             log.error("Error in setting up plugin %s \n %s" % (plugin, traceback.format_exc()))
