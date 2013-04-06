@@ -80,7 +80,7 @@ class Manager(object):
     def _setupPlugin(self, base, plugin):
         plugin = plugin.lower()
         try:
-            plugincfg = et.parse(os.path.join(self._plugindir, plugin, "plugin.xml"))
+            plugincfg = xml.etree.ElementTree.parse(os.path.join(self._plugindir, plugin, "plugin.xml"))
         except IOError:
             log.error("Plugin", plugin, "needs a plugin.xml")
             raise IOError("Plugin " + plugin + " needs plugin.xml")
