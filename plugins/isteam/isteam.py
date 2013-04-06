@@ -162,7 +162,7 @@ class InterfaceSteam:
             else:
                 self._fireChatCallbacks(source, message)
         except Exception:
-            log.error("Error in ISteam Command \n %s" % traceback.format_exec())
+            log.error("Error in ISteam Command \n %s" % traceback.format_exc())
 
     def _fireChatCallbacks(self, source, chatmsg):
         for callback in self.chatcallbacks:
