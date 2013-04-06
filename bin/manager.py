@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree
 import sys
 import os
 import importlib
@@ -10,7 +10,7 @@ bot_version = "1.0.1"
 class Manager(object):
     """The simple plugin system"""
     def __init__(self, config):
-        self._config = et.parse(config)
+        self._config = xml.etree.ElementTree.parse(config)
         self._plugindir = 'plugins'
         self._plugins = {}
         self._plugins_info = {}

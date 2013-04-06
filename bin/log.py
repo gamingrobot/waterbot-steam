@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as et
+import xml.etree.ElementTree
 import inspect
 import datetime
 import os
@@ -17,7 +17,7 @@ class Log:
     def __init__(self, config):
         self.logcallbacks = []
         self.logtype = LogType
-        elem = et.parse(config)
+        elem = xml.etree.ElementTree.parse(config)
         logger = elem.find('logger')
         #log file
         logdir = logger.find('logdir')
@@ -54,10 +54,9 @@ class Log:
 
     def _getName(self):
         retmod = "Module"
-        frm = inspect.stack()[2]
+        frame, module, line, function, context, index = inspect.stack()[2]
         try:
-            print inspect.getmodule(frm[0])
-            #retmod = inspect.getmodule(frame.__name__)
+            retmod = inspect.getmodulename(module)
         except:
             pass
         return retmod
