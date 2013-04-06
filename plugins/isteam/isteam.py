@@ -133,7 +133,7 @@ class InterfaceSteam:
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
     def OnPersonaState(self, callback):
-        log.waring(callback.SourceSteamID, callback.ClanRank)
+        log.warning(callback.SourceSteamID, callback.ClanRank)
 
     def OnChatEnter(self, callback):
         chatroom = self.IDtoLong(callback.ChatID)
