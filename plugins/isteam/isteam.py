@@ -123,7 +123,6 @@ class InterfaceSteam:
     def OnChatMsg(self, callback):
         chatterid = self.IDtoLong(callback.ChatterID)
         chatroomid = self.IDtoLong(callback.ChatRoomID)
-        log.info(chatroomid, chatterid)
         message = callback.Message
         if chatterid == self.superuser:
             chatperm = Perm.Super
