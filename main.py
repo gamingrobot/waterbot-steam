@@ -24,12 +24,12 @@ class WatchDog:
     def _restartBot(self):
         print "-----------------------------"
         self._updateBot()
-        print "-----------------------------\n"
         self._openBot()
 
     def _updateBot(self):
         g = git.cmd.Git(os.getcwd())
         print g.pull()
+        print "-----------------------------\n"
 
     def _openBot(self):
         self.bot = subprocess.Popen(["ipy", '-X:Frames', '-u', 'bot.py', config], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, close_fds=ON_POSIX)
