@@ -31,8 +31,6 @@ class InterfaceSteam:
             roomid = int(chatroom.get("id"))
             self.chatrooms[roomname] = roomid
 
-        print self.chatrooms
-
         #connect to steam
         self.steamClient = SteamClient()
         callbackManager = CallbackManager(self.steamClient)
@@ -65,21 +63,15 @@ class InterfaceSteam:
 
     def joinChatCommand(self, command, args, source):
         if len(args) >= 1:
-            chatroom = SteamID(int(args[0]))
-            log.info("Connecting to room %s" % chatroom)
-            self.steamFriends.JoinChat(chatroom)
+            self.joinChatRoom(int(args[0]))
             return "Connected to %s" % args[0]
 
     def leaveChatCommand(self, command, args, source):
-        try:
-            if len(args) >= 1:
-                chatroom = SteamID(int(args[0]))
-            else:
-                chatroom = SteamID(int(source['ChatRoomID']))
-            log.info("Disconnecting from room %s" % chatroom)
-            self.steamFriends.LeaveChat(chatroom)
-        except:
-            return "I'm not currently there"
+        if len(args) >= 1:
+            chatroom = int(args[0])
+        else:
+            chatroom = int(source['ChatRoomID'])
+        return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
@@ -111,9 +103,7 @@ class InterfaceSteam:
     def OnLoggedOn(self, callback):
         log.info("Logged into steam as %s" % self.username)
         for chatname in self.chatrooms.keys():
-            chatroom = SteamID(self.chatrooms[chatname])
-            log.info("Connecting to room %s" % chatroom)
-            self.steamFriends.JoinChat(chatroom)
+            self.joinChatRoom(self.chatrooms[chatname])
 
     def OnLoggedOff(self, callback):
         log.info("Logged off from steam")
@@ -175,6 +165,19 @@ class InterfaceSteam:
 
     def sendChatMessage(self, steamid, msg):
         self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
+
+    def joinChatRoom(self, room):
+        chatroom = SteamID(room)
+        log.info("Connecting to room %s" % chatroom)
+        self.steamFriends.JoinChat(chatroom)
+
+    def leaveChatRoom(self, room):
+        try:
+            chatroom = SteamID(room)
+            log.info("Disconnecting from room %s" % chatroom)
+            self.steamFriends.LeaveChat(chatroom)
+        except:
+            return "I'm not currently there"
 
     def destroy(self, callback):
         self.steamUser.LogOff()
