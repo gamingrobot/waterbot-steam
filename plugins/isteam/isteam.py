@@ -178,6 +178,9 @@ class InterfaceSteam:
         chatroom = SteamID(room)
         log.info("Connecting to room %s" % chatroom)
         self.steamFriends.JoinChat(chatroom)
+        print chatroom.AccountID
+        print chatroom
+        print chatroom.ConvertToUInt64()
         self.chatrooms.append(int(chatroom.AccountID))
 
     def leaveChatRoom(self, room):
