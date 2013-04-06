@@ -19,7 +19,7 @@ class InterfaceSteam:
         self.username = manager.config.getValue(steamcfg, 'username')
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
-        self.superuser = manager.config.getValue(steamcfg, 'superuser')
+        self.superuser = SteamID(manager.config.getValue(steamcfg, 'superuser')).AccountID
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
@@ -83,7 +83,7 @@ class InterfaceSteam:
     #log happend
     def logCallback(self, logdata, level):
         if level >= log.logtype.warning:
-            self.steamFriends.SendChatMessage(SteamID(str(self.superuser)), EChatEntryType.ChatMsg, logdata)
+            self.steamFriends.SendChatMessage(self.superuser, EChatEntryType.ChatMsg, logdata)
 
     #callbacks
     def OnConnected(self, callback):
@@ -115,23 +115,26 @@ class InterfaceSteam:
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
     def OnChatMsg(self, callback):
-        #log.info(callback.ChatterID)
+        chatterid = SteamID(callback.ChatterID).AccountID
+        chatroomid = SteamID(callback.ChatRoomID).AccountID
+        log.info(chatroomid, chatterid)
         message = callback.Message
-        if str(callback.ChatterID) == self.superuser:
+        if str(chatterid) == self.superuser:
             chatperm = Perm.Super
         else:
             chatperm = Perm.User
-        source = {'SourceID': callback.ChatRoomID, 'SenderRank': chatperm, 'SenderID': callback.ChatterID}
+        source = {'SourceID': chatroomid, 'SenderRank': chatperm, 'SenderID': chatterid}
         self._processCommand(source, message)
 
     def OnFriendMsg(self, callback):
         if callback.EntryType == EChatEntryType.ChatMsg:
+            senderid = SteamID(callback.Sender).AccountID
             message = callback.Message
-            if str(callback.Sender) == self.superuser:
+            if str(senderid) == self.superuser:
                 chatperm = Perm.Super
             else:
                 chatperm = Perm.User
-            source = {'SourceID': callback.Sender, 'SenderRank': chatperm, 'SenderID': callback.Sender}
+            source = {'SourceID': senderid, 'SenderRank': chatperm, 'SenderID': senderid}
             self._processCommand(source, message)
 
     def _processCommand(self, source, message):
@@ -166,10 +169,11 @@ class InterfaceSteam:
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
 
-    def sendChatMessage(self, steamid, msg):
+    def sendChatMessage(self, accountid, msg):
         print self.chatrooms
-        print steamid
-        if steamid in self.chatrooms:
+        print accountid
+        steamid = SteamID(accountid)
+        if steamid.AccountID in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
             self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
@@ -181,13 +185,14 @@ class InterfaceSteam:
         print chatroom.AccountID
         print chatroom
         print chatroom.ConvertToUInt64()
-        self.chatrooms.append(int(chatroom.AccountID))
+        self.chatrooms.append(chatroom.AccountID)
 
     def leaveChatRoom(self, room):
         try:
             chatroom = SteamID(room)
             log.info("Disconnecting from room %s" % chatroom)
             self.steamFriends.LeaveChat(chatroom)
+            del self.chatrooms[chatroom.AccountID]
             return "", "Left Room %s" % room
         except:
             return "I'm not currently there"
