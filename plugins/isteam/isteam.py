@@ -122,8 +122,8 @@ class InterfaceSteam:
         self.chatrooms.append(chatroom)
 
     def OnChatMsg(self, callback):
-        chatterid = str(SteamID(callback.ChatterID))
-        chatroomid = str(SteamID(callback.ChatRoomID))
+        chatterid = self.IDtoStr(callback.ChatterID)
+        chatroomid = self.IDtoStr(callback.ChatRoomID)
         log.info(chatroomid, chatterid)
         message = callback.Message
         if str(chatterid) == self.superuser:
@@ -135,7 +135,7 @@ class InterfaceSteam:
 
     def OnFriendMsg(self, callback):
         if callback.EntryType == EChatEntryType.ChatMsg:
-            senderid = str(SteamID(callback.Sender))
+            senderid = self.IDtoStr(callback.Sender)
             message = callback.Message
             if str(senderid) == self.superuser:
                 chatperm = Perm.Super
@@ -201,7 +201,7 @@ class InterfaceSteam:
             return "I'm not currently there"
 
     def IDtoStr(self, steamid):
-        return str(SteamID(steamid))
+        return int(SteamID(steamid).ConvertToUInt64())
 
     def destroy(self, callback):
         self.steamUser.LogOff()
