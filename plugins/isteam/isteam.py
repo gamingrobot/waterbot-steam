@@ -148,7 +148,7 @@ class InterfaceSteam:
                     msgresponse = msgresponse.strip()
                     if msgresponse != "":
                         if 'ChatRoomID' in source.keys():
-                            self.sendChatMessage(source['ChatRoomID'], msgresponse)
+                            self.sendChatRoomMessage(source['ChatRoomID'], msgresponse)
                         else:
                             self.sendChatMessage(source['SourceID'], msgresponse)
             else:
@@ -163,8 +163,11 @@ class InterfaceSteam:
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
 
+    def sendChatRoomMessage(self, room, msg):
+        self.steamFriends.SendChatRoomMessage(room, EChatEntryType.ChatMsg, str(msg))
+
     def sendChatMessage(self, steamid, msg):
-        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
+        self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
 
     def joinChatRoom(self, room):
         chatroom = SteamID(room)
