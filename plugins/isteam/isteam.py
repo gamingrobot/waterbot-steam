@@ -47,6 +47,7 @@ class InterfaceSteam:
 
         Callback[SteamUser.AccountInfoCallback](self.OnAccountInfo, callbackManager)
         Callback[SteamFriends.ChatMsgCallback](self.OnChatMsg, callbackManager)
+        Callback[SteamFriends.FriendMsgCallback](self.OnFriendMsg, callbackManager)
 
         self.steamClient.Connect()
 
@@ -121,15 +122,28 @@ class InterfaceSteam:
     def OnChatMsg(self, callback):
         #log.info(callback.ChatterID)
         message = callback.Message
-        log.info(message)
         message = message.strip().split(" ")
+        if str(callback.ChatterID) == self.superuser:
+            chatperm = Perm.Super
+        else:
+            chatperm = Perm.User
+        source = {'SourceID': callback.ChatterID, 'SourceRank': chatperm, 'ChatRoomID': callback.ChatRoomID}
+        self._processCommand(source, message)
+
+    def OnFriendMsg(self, callback):
+        message = callback.Message
+        message = message.strip().split(" ")
+        if str(callback.Sender) == self.superuser:
+            chatperm = Perm.Super
+        else:
+            chatperm = Perm.User
+        source = {'SourceID': callback.Sender, 'SourceRank': chatperm}
+        self._processCommand(source, message)
+
+    def _processCommand(self, source, message):
+        log.info(source['SourceID'], message)
         try:
             if message[0] == "wb":
-                if str(callback.ChatterID) == self.superuser:
-                    chatperm = Perm.Super
-                else:
-                    chatperm = Perm.User
-                source = {'ChatterID': callback.ChatterID, 'ChatterRank': chatperm, 'ChatRoomID': callback.ChatRoomID}
                 response = manager.commandmanager.processCommand(source, message[1:])
                 if isinstance(response, tuple):
                     msgresponse = response[0]
@@ -141,7 +155,10 @@ class InterfaceSteam:
                 else:
                     msgresponse = msgresponse.strip()
                     if msgresponse != "":
-                        self.steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, str(msgresponse))
+                        if 'ChatRoomID' in source.keys():
+                            self.sendChatMessage(source['ChatRoomID'], msgresponse)
+                        else:
+                            self.sendChatMessage(source['SourceID'], msgresponse)
             else:
                 self._fireChatCallbacks(callback)
         except Exception as e:
@@ -154,8 +171,8 @@ class InterfaceSteam:
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
 
-    def sendChatMessage(self, room, msg):
-        self.steamFriends.SendChatRoomMessage(room, EChatEntryType.ChatMsg, str(msg))
+    def sendChatMessage(self, steamid, msg):
+        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
 
     def destroy(self, callback):
         self.steamUser.LogOff()
