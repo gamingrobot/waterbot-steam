@@ -94,15 +94,15 @@ class Manager(object):
             else:
                 log.error("Plugin", plugin, "doesnt have main_class attr, please put main_class = MainClassName in plugin __init__.py")
                 raise AttributeError("Plugin " + plugin + " is missing main_class")
+            #set attr
+            if not hasattr(self, plugin):
+                setattr(self, plugin, inst)
+            else:
+                log.error("Plugin", plugin, "overides a manager object, please pick a diffrent name")
+                raise StandardError("Plugin " + plugin + " overides a manager object")
+            self._plugins[plugin] = inst
         except Exception:
-            log.error("Error in plugin %s __init__ \n %s" % (plugin, traceback.format_exc()))
-        #set attr
-        if not hasattr(self, plugin):
-            setattr(self, plugin, inst)
-        else:
-            log.error("Plugin", plugin, "overides a manager object, please pick a diffrent name")
-            raise StandardError("Plugin " + plugin + " overides a manager object")
-        self._plugins[plugin] = inst
+            log.error("Error in setting up plugin %s \n %s" % (plugin, traceback.format_exc()))
 
     #return plugin by name
     def get(self, plugin):
