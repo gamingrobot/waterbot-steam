@@ -91,8 +91,11 @@ class InterfaceSteam:
     #log happend
     def logCallback(self, logdata, level):
         if level >= log.logtype.warning:
-            steamid = SteamID(self.superuser)
-            self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, logdata)
+            try:
+                steamid = SteamID(self.superuser)
+                self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, logdata)
+            except:
+                pass
 
     #callbacks
     def OnConnected(self, callback):
