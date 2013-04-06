@@ -23,6 +23,7 @@ class InterfaceSteam:
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
+        manager.commandmanager.registerCommand("sendmsg", self.sendMsgCommand, perm=Perm.Super)
 
         self.cfgchatrooms = {}
 
@@ -76,6 +77,10 @@ class InterfaceSteam:
         else:
             chatroom = self.IDtoLong(source['SourceID'])
         return self.leaveChatRoom(chatroom)
+
+    def sendMsgCommand(self, command, args, source):
+        steamid = SteamID(args[0])
+        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
@@ -187,13 +192,13 @@ class InterfaceSteam:
         self.steamFriends.JoinChat(chatroom)
 
     def leaveChatRoom(self, room):
-        try:
+        if self.IDtoLong(room) in self.chatrooms:
             chatroom = SteamID(room)
             log.info("Disconnecting from room %s" % self.IDtoLong(room))
             self.steamFriends.LeaveChat(chatroom)
             del self.chatrooms[self.IDtoLong(room)]
             return "", "Left Room %s" % room
-        except:
+        else:
             return "I'm not currently there"
 
     def IDtoStr(self, steamid):
