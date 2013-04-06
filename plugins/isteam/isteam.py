@@ -118,7 +118,6 @@ class InterfaceSteam:
     def OnChatEnter(self, callback):
         chatroom = self.IDtoLong(callback.ChatID)
         log.info("Joined Chat %s" % chatroom)
-        print chatroom
         self.chatrooms.append(chatroom)
 
     def OnChatMsg(self, callback):
@@ -177,8 +176,6 @@ class InterfaceSteam:
         self.chatcallbacks.append(callback)
 
     def sendChatMessage(self, chatid, msg):
-        print self.chatrooms
-        print chatid
         steamid = SteamID(chatid)
         if self.IDtoLong(chatid) in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
