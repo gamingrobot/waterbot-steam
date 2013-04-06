@@ -21,7 +21,7 @@ class Base:
     def restartBot(self, command, args, source):
         t = Timer(1, manager.restartBot)
         t.start()
-        return "brb restarting"
+        return "", "Restarting WaterBot"
 
     def echoCommand(self, command, args, source):
-        return " ".join(args)
+        return "", " ".join(args)
