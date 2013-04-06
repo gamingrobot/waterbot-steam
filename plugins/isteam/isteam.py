@@ -19,7 +19,7 @@ class InterfaceSteam:
         self.username = manager.config.getValue(steamcfg, 'username')
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
-        self.superuser = self.IDtoStr(manager.config.getValue(steamcfg, 'superuser'))
+        self.superuser = self.IDtoLong(manager.config.getValue(steamcfg, 'superuser'))
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
@@ -74,7 +74,7 @@ class InterfaceSteam:
         if len(args) >= 1:
             chatroom = int(args[0])
         else:
-            chatroom = self.IDtoStr(source['SourceID'])
+            chatroom = self.IDtoLong(source['SourceID'])
         return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
@@ -116,14 +116,14 @@ class InterfaceSteam:
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
     def OnChatEnter(self, callback):
-        chatroom = self.IDtoStr(callback.ChatID)
+        chatroom = self.IDtoLong(callback.ChatID)
         log.info("Joined Chat %s" % chatroom)
         print chatroom
         self.chatrooms.append(chatroom)
 
     def OnChatMsg(self, callback):
-        chatterid = self.IDtoStr(callback.ChatterID)
-        chatroomid = self.IDtoStr(callback.ChatRoomID)
+        chatterid = self.IDtoLong(callback.ChatterID)
+        chatroomid = self.IDtoLong(callback.ChatRoomID)
         log.info(chatroomid, chatterid)
         message = callback.Message
         if chatterid == self.superuser:
@@ -135,7 +135,7 @@ class InterfaceSteam:
 
     def OnFriendMsg(self, callback):
         if callback.EntryType == EChatEntryType.ChatMsg:
-            senderid = self.IDtoStr(callback.Sender)
+            senderid = self.IDtoLong(callback.Sender)
             message = callback.Message
             if senderid == self.superuser:
                 chatperm = Perm.Super
@@ -180,7 +180,7 @@ class InterfaceSteam:
         print self.chatrooms
         print chatid
         steamid = SteamID(chatid)
-        if self.IDtoStr(chatid) in self.chatrooms:
+        if self.IDtoLong(chatid) in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
             self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
@@ -193,14 +193,17 @@ class InterfaceSteam:
     def leaveChatRoom(self, room):
         try:
             chatroom = SteamID(room)
-            log.info("Disconnecting from room %s" % self.IDtoStr(room))
+            log.info("Disconnecting from room %s" % self.IDtoLong(room))
             self.steamFriends.LeaveChat(chatroom)
-            del self.chatrooms[self.IDtoStr(room)]
+            del self.chatrooms[self.IDtoLong(room)]
             return "", "Left Room %s" % room
         except:
             return "I'm not currently there"
 
     def IDtoStr(self, steamid):
+        return str(SteamID(steamid).Render())
+
+    def IDtoLong(self, steamid):
         return long(SteamID(steamid).ConvertToUInt64())
 
     def destroy(self, callback):
