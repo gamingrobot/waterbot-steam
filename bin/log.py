@@ -54,10 +54,10 @@ class Log:
 
     def _getName(self):
         retmod = "Module"
-        frame, module, line, function, context, index = inspect.stack()[2]
+        frm = inspect.stack()[2]
         try:
-            print module
-            retmod = inspect.getmodule(frame.__name__)
+            print inspect.getmodule(frm[0])
+            #retmod = inspect.getmodule(frame.__name__)
         except:
             pass
         return retmod
