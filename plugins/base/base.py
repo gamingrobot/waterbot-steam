@@ -5,7 +5,7 @@ from bin.shared.perms import Perm
 class Base:
     def __init__(self, xml):
         manager.commandmanager.registerCommand("about", self.aboutCommand)
-        manager.commandmanager.registerCommand("plugins", self.pluginsCommand, perm=Perm.Owner)
+        manager.commandmanager.registerCommand("plugins", self.pluginsCommand)
         manager.commandmanager.registerCommand("restart", self.restartBot, perm=Perm.Super)
         manager.commandmanager.registerCommand("echo", self.echoCommand)
 
