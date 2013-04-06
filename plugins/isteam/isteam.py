@@ -138,7 +138,7 @@ class InterfaceSteam:
         try:
             if messagesplit[0] == "wb":
                 response = manager.commandmanager.processCommand(source, messagesplit[1:])
-                if msgresponse == CmdResponse.Continue or msgresponse is None:
+                if response == CmdResponse.Continue or response is None:
                     self._fireChatCallbacks(source, message)
                 else:
                     if isinstance(response, tuple):
