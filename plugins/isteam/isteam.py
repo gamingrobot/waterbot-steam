@@ -24,13 +24,15 @@ class InterfaceSteam:
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
 
-        self.chatrooms = {}
+        self.cfgchatrooms = {}
 
         chatroomscfg = steamcfg.find('chatrooms')
         for chatroom in chatroomscfg.findall("room"):
             roomname = str(chatroom.get("name"))
             roomid = int(chatroom.get("id"))
-            self.chatrooms[roomname] = roomid
+            self.cfgchatrooms[roomname] = roomid
+
+        self.chatrooms = {}
 
         #connect to steam
         self.steamClient = SteamClient()
@@ -104,7 +106,7 @@ class InterfaceSteam:
     def OnLoggedOn(self, callback):
         log.info("Logged into steam as %s" % self.username)
         for chatname in self.chatrooms.keys():
-            self.joinChatRoom(self.chatrooms[chatname])
+            self.joinChatRoom(self.cfgchatrooms[chatname])
 
     def OnLoggedOff(self, callback):
         log.info("Logged off from steam")
@@ -165,10 +167,8 @@ class InterfaceSteam:
         self.chatcallbacks.append(callback)
 
     def sendChatMessage(self, steamid, msg):
-        try:
-            steamid = int(steamid)
-        except:
-            pass
+        print self.chatrooms.values()
+        print steamid
         if steamid in self.chatrooms.values():
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
@@ -177,8 +177,8 @@ class InterfaceSteam:
     def joinChatRoom(self, room):
         chatroom = SteamID(room)
         log.info("Connecting to room %s" % chatroom)
-        self.steamFriends.JoinChat(chatroom)
-        self.chatrooms[str(chatroom)] = int(room)
+        steamid = self.steamFriends.JoinChat(chatroom)
+        self.chatrooms[str(chatroom)] = int(steamid)
 
     def leaveChatRoom(self, room):
         try:
