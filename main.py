@@ -17,6 +17,7 @@ class WatchDog:
         self.bot = None
 
     def startBot(self):
+        self._updateBot()
         self._openBot()
         self._watcher()
 
