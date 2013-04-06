@@ -103,6 +103,7 @@ class Manager(object):
             self._plugins[plugin] = inst
         except Exception:
             log.error("Error in setting up plugin %s \n %s" % (plugin, traceback.format_exc()))
+            sys.exit(0)
 
     #return plugin by name
     def get(self, plugin):

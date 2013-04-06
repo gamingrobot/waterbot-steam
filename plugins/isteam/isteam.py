@@ -115,7 +115,10 @@ class InterfaceSteam:
     def OnDisconnected(self, callback):
         log.info("Disconnected from steam")
         self._isRunning = False
-        self._destorycallback("isteam")
+        try:
+            self._destorycallback("isteam")
+        except:
+            pass
 
     def OnLoggedOn(self, callback):
         log.info("Logged into steam as %s" % self.username)
