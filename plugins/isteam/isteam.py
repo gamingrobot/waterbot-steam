@@ -105,7 +105,7 @@ class InterfaceSteam:
 
     def OnLoggedOn(self, callback):
         log.info("Logged into steam as %s" % self.username)
-        for chatname in self.chatrooms.keys():
+        for chatname in self.cfgchatrooms.keys():
             self.joinChatRoom(self.cfgchatrooms[chatname])
 
     def OnLoggedOff(self, callback):
