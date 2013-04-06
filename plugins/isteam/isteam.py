@@ -165,6 +165,10 @@ class InterfaceSteam:
         self.chatcallbacks.append(callback)
 
     def sendChatMessage(self, steamid, msg):
+        try:
+            steamid = int(steamid)
+        except:
+            pass
         if steamid in self.chatrooms.values():
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
