@@ -33,9 +33,10 @@ nosetests.xml
 .project
 .pydevproject
 
-#steamkit
+#dlls
 SteamKit2.dll
 protobuf-net.dll
+mysql.data.dll
 
 #configs
 config.xml
