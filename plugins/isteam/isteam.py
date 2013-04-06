@@ -58,6 +58,9 @@ class InterfaceSteam:
         #t.daemon = True  # thread dies with the program
         steamthread.start()
 
+        #setup logging
+        log.registerLogListener(self.logCallback)
+
     def joinChatCommand(self, command, args, source):
         if len(args) >= 1:
             chatroom = SteamID(int(args[0]))
@@ -79,6 +82,10 @@ class InterfaceSteam:
     def _steamloop(self, callbackManager):
         while self._isRunning:
             callbackManager.RunWaitCallbacks(System.TimeSpan.FromSeconds(1))
+
+    #log happend
+    def logCallback(self, logdata):
+        self.steamFriends.SendChatMessage(SteamID(str(self.superuser)), EChatEntryType.ChatMsg, logdata)
 
     #callbacks
     def OnConnected(self, callback):

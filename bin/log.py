@@ -63,7 +63,7 @@ class Log:
         timelogdata = "%s: %s" % (timestamp, logdata)
         self.file(timelogdata)
         for callback in self.logcallbacks:
-            callback(timelogdata)
+            callback(logdata)
 
     def registerLogListener(self, callback):
         self.logcallbacks.append(callback)
