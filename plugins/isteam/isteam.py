@@ -32,7 +32,7 @@ class InterfaceSteam:
             roomid = int(chatroom.get("id"))
             self.cfgchatrooms[roomname] = roomid
 
-        self.chatrooms = {}
+        self.chatrooms = []
 
         #connect to steam
         self.steamClient = SteamClient()
@@ -73,7 +73,7 @@ class InterfaceSteam:
         if len(args) >= 1:
             chatroom = int(args[0])
         else:
-            chatroom = int(source['SourceID'])
+            chatroom = int(str(source['SourceID']))
         return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
@@ -167,9 +167,9 @@ class InterfaceSteam:
         self.chatcallbacks.append(callback)
 
     def sendChatMessage(self, steamid, msg):
-        print self.chatrooms.values()
+        print self.chatrooms
         print steamid
-        if steamid in self.chatrooms.values():
+        if steamid in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
             self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
@@ -178,7 +178,7 @@ class InterfaceSteam:
         chatroom = SteamID(room)
         log.info("Connecting to room %s" % chatroom)
         steamid = self.steamFriends.JoinChat(chatroom)
-        self.chatrooms[str(chatroom)] = int(steamid)
+        self.chatrooms.append(int(steamid))
 
     def leaveChatRoom(self, room):
         try:
