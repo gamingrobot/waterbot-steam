@@ -1,7 +1,7 @@
 import shlex
 import inspect
 from bin.shared.perms import Perm
-from bin.shared.commandresponses import CmdResponse
+from bin.shared.commandresponse import CmdResponse
 
 
 class CommandManager:

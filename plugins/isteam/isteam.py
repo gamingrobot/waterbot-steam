@@ -6,7 +6,7 @@ from SteamKit2 import *
 import sys
 from threading import Thread
 from bin.shared.perms import Perm
-from bin.shared.commandresponses import CmdResponse
+from bin.shared.commandresponse import CmdResponse
 import traceback
 
 
