@@ -31,7 +31,8 @@ class Log:
         if loglevel is None:
             loglevel = "info"
             self.loglevel = 2
-            self.warning('Logger: No loglevel set in config <logger> <level="info" /> <logger/> assuming info level')
+            msg = 'Logger: No loglevel set in config <logger> <level="info" /> <logger/> assuming info level'
+            self._log(self._format("warning", "log", msg), self.logtype.warning)
         else:
             loglevel = loglevel.get('value')
 
@@ -46,7 +47,7 @@ class Log:
         elif loglevel == "manager":
             self.loglevel = self.logtype.manager
 
-        self.debug("Level", loglevel)
+        self._log(self._format("info", "log", "Level " + loglevel), self.logtype.warning)
 
         #err hook
         sys.excepthook = self.excepthook
