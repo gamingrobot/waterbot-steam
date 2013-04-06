@@ -103,12 +103,14 @@ class InterfaceSteam:
             log.error("Unable to connect to steam %s" % callback.Result)
 
         log.info("Connected to steam, logging in %s" % self.username)
-
         logondetails = SteamUser.LogOnDetails()
         logondetails.Username = self.username
         logondetails.Password = self.password
 
-        self.steamUser.LogOn(logondetails)
+        try:
+            self.steamUser.LogOn(logondetails)
+        except:
+            log.error("Could not login")
 
     def OnDisconnected(self, callback):
         log.info("Disconnected from steam")
