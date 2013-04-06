@@ -132,7 +132,6 @@ class InterfaceSteam:
 
     def OnFriendMsg(self, callback):
         message = callback.Message
-        message = message.strip().split(" ")
         if str(callback.Sender) == self.superuser:
             chatperm = Perm.Super
         else:
@@ -142,16 +141,17 @@ class InterfaceSteam:
 
     def _processCommand(self, source, message):
         log.info(source['SourceID'], message)
+        messagesplit = message.strip().split(" ")
         try:
-            if message[0] == "wb":
-                response = manager.commandmanager.processCommand(source, message[1:])
+            if messagesplit[0] == "wb":
+                response = manager.commandmanager.processCommand(source, messagesplit[1:])
                 if isinstance(response, tuple):
                     msgresponse = response[0]
                 else:
                     msgresponse = response
 
                 if msgresponse is False or msgresponse is None:
-                    self._fireChatCallbacks(callback)
+                    self._fireChatCallbacks(source, message)
                 else:
                     msgresponse = msgresponse.strip()
                     if msgresponse != "":
@@ -160,13 +160,13 @@ class InterfaceSteam:
                         else:
                             self.sendChatMessage(source['SourceID'], msgresponse)
             else:
-                self._fireChatCallbacks(callback)
+                self._fireChatCallbacks(source, message)
         except Exception as e:
             log.error(e)
 
-    def _fireChatCallbacks(self, chatmsg):
+    def _fireChatCallbacks(self, source, chatmsg):
         for callback in self.chatcallbacks:
-            callback(chatmsg)
+            callback(source, chatmsg)
 
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
