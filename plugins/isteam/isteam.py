@@ -184,7 +184,7 @@ class InterfaceSteam:
         self.steamFriends.JoinChat(chatroom)
         print chatroom.ConvertToUInt64()
         print chatroom
-        print chatroom.ConvertToUInt64()
+        print str(chatroom)
         self.chatrooms.append(chatroom.ConvertToUInt64())
 
     def leaveChatRoom(self, room):
