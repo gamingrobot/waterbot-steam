@@ -56,6 +56,7 @@ class Log:
         retmod = "Module"
         frame, module, line, function, context, index = inspect.stack()[2]
         try:
+            print module
             retmod = inspect.getmodule(frame.__name__)
         except:
             pass
