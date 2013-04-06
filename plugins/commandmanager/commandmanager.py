@@ -51,7 +51,7 @@ class CommandManager:
             return CmdResponse.Continue
 
     def processCommand(self, source, data):
-        src = "%s, %s" % (source['SourceID'], source['SourceRank'])
+        src = "source:%s, sender:%s, rank:%s" % (source['SourceID'], source['SenderID'], source['SenderRank'])
         prodata = data
         if not isinstance(data, list):
             prodata = self._processCommandArguments(data)
@@ -75,7 +75,7 @@ class CommandManager:
             log.info("command from", src, "COMMAND", cmd, "ARGS", args)
             result = CmdResponse.Continue
             if cmd in self._commands:
-                if self._commands[cmd]["perm"] <= source['SourceRank']:
+                if self._commands[cmd]["perm"] <= source['SenderRank']:
                     result = self.fireCommand(cmd, args, source)
             return result
 

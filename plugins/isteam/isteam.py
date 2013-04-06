@@ -71,7 +71,7 @@ class InterfaceSteam:
         if len(args) >= 1:
             chatroom = int(args[0])
         else:
-            chatroom = int(source['ChatRoomID'])
+            chatroom = int(source['SourceID'])
         return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
@@ -119,7 +119,7 @@ class InterfaceSteam:
             chatperm = Perm.Super
         else:
             chatperm = Perm.User
-        source = {'SourceID': callback.ChatterID, 'SourceRank': chatperm, 'ChatRoomID': callback.ChatRoomID}
+        source = {'SourceID': callback.ChatRoomID, 'SenderRank': chatperm, 'SenderID': callback.ChatterID}
         self._processCommand(source, message)
 
     def OnFriendMsg(self, callback):
@@ -129,7 +129,7 @@ class InterfaceSteam:
                 chatperm = Perm.Super
             else:
                 chatperm = Perm.User
-            source = {'SourceID': callback.Sender, 'SourceRank': chatperm}
+            source = {'SourceID': callback.Sender, 'SenderRank': chatperm, 'SenderID': callback.Sender}
             self._processCommand(source, message)
 
     def _processCommand(self, source, message):
@@ -144,17 +144,14 @@ class InterfaceSteam:
                     if isinstance(response, tuple):
                         chatroomresponse = str(response[0]).strip()
                         friendresponse = str(response[1]).strip()
-                        if 'ChatRoomID' in source.keys() and chatroomresponse != "":
-                            self.sendChatRoomMessage(source['ChatRoomID'], chatroomresponse)
-                        elif friendresponse != "":
-                            self.sendChatMessage(source['SourceID'], friendresponse)
+                        if chatroomresponse != "":
+                            self.sendChatMessage(source['SourceID'], chatroomresponse)
+                        if friendresponse != "":
+                            self.sendChatMessage(source['SenderID'], friendresponse)
                     else:
                         msgresponse = str(response).strip()
                         if msgresponse != "":
-                            if 'ChatRoomID' in source.keys():
-                                self.sendChatRoomMessage(source['ChatRoomID'], msgresponse)
-                            else:
-                                self.sendChatMessage(source['SourceID'], msgresponse)
+                            self.sendChatMessage(source['SourceID'], msgresponse)
             else:
                 self._fireChatCallbacks(source, message)
         except Exception:
@@ -167,16 +164,17 @@ class InterfaceSteam:
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
 
-    def sendChatRoomMessage(self, room, msg):
-        self.steamFriends.SendChatRoomMessage(room, EChatEntryType.ChatMsg, str(msg))
-
     def sendChatMessage(self, steamid, msg):
-        self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
+        if steamid in self.chatrooms.values():
+            self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
+        else:
+            self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
 
     def joinChatRoom(self, room):
         chatroom = SteamID(room)
         log.info("Connecting to room %s" % chatroom)
         self.steamFriends.JoinChat(chatroom)
+        self.chatrooms[str(chatroom)] = int(chatroom)
 
     def leaveChatRoom(self, room):
         try:
