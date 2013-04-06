@@ -88,21 +88,18 @@ class Manager(object):
         plugininfo = plugincfg.find('info')
         self._plugins_info[plugin] = {"pluginname": plugininfo.get('name'), "author": plugininfo.get('author')}
         #instance plugin
-        try:
-            if hasattr(sys.modules[base], "main_class"):
-                inst = sys.modules[base].main_class(plugincfg.find("pluginconfig"))
-            else:
-                log.error("Plugin", plugin, "doesnt have main_class attr, please put main_class = MainClassName in plugin __init__.py")
-                raise AttributeError("Plugin " + plugin + " is missing main_class")
-            #set attr
-            if not hasattr(self, plugin):
-                setattr(self, plugin, inst)
-            else:
-                log.error("Plugin", plugin, "overides a manager object, please pick a diffrent name")
-                raise StandardError("Plugin " + plugin + " overides a manager object")
-            self._plugins[plugin] = inst
-        except Exception:
-            log.error("Error in setting up plugin %s \n %s" % (plugin, traceback.format_exc()))
+        if hasattr(sys.modules[base], "main_class"):
+            inst = sys.modules[base].main_class(plugincfg.find("pluginconfig"))
+        else:
+            log.error("Plugin", plugin, "doesnt have main_class attr, please put main_class = MainClassName in plugin __init__.py")
+            raise AttributeError("Plugin " + plugin + " is missing main_class")
+        #set attr
+        if not hasattr(self, plugin):
+            setattr(self, plugin, inst)
+        else:
+            log.error("Plugin", plugin, "overides a manager object, please pick a diffrent name")
+            raise StandardError("Plugin " + plugin + " overides a manager object")
+        self._plugins[plugin] = inst
 
     #return plugin by name
     def get(self, plugin):
