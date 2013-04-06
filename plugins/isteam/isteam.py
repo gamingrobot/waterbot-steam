@@ -52,7 +52,7 @@ class InterfaceSteam:
         Callback[SteamFriends.ChatEnterCallback](self.OnChatEnter, callbackManager)
         Callback[SteamFriends.ChatMsgCallback](self.OnChatMsg, callbackManager)
         Callback[SteamFriends.FriendMsgCallback](self.OnFriendMsg, callbackManager)
-        Callback[SteamFriends.ChatMemberInfoCallback](self.OnChatMemberInfo, callbackManager)
+        Callback[SteamFriends.PersonaStateCallback](self.OnPersonaState, callbackManager)
 
         self.steamClient.Connect()
 
@@ -132,8 +132,8 @@ class InterfaceSteam:
     def OnAccountInfo(self, callback):
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
-    def OnChatMemberInfo(self, callback):
-        print callback
+    def OnPersonaState(self, callback):
+        log.waring(callback.SourceSteamID, callback.ClanRank)
 
     def OnChatEnter(self, callback):
         chatroom = self.IDtoLong(callback.ChatID)
