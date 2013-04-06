@@ -142,27 +142,27 @@ class InterfaceSteam:
     def _processCommand(self, source, message):
         log.info(source['SourceID'], message)
         messagesplit = message.strip().split(" ")
-        try:
-            if messagesplit[0] == "wb":
-                response = manager.commandmanager.processCommand(source, messagesplit[1:])
-                if isinstance(response, tuple):
-                    msgresponse = response[0]
-                else:
-                    msgresponse = response
-
-                if msgresponse is False or msgresponse is None:
-                    self._fireChatCallbacks(source, message)
-                else:
-                    msgresponse = msgresponse.strip()
-                    if msgresponse != "":
-                        if 'ChatRoomID' in source.keys():
-                            self.sendChatMessage(source['ChatRoomID'], msgresponse)
-                        else:
-                            self.sendChatMessage(source['SourceID'], msgresponse)
+        #try:
+        if messagesplit[0] == "wb":
+            response = manager.commandmanager.processCommand(source, messagesplit[1:])
+            if isinstance(response, tuple):
+                msgresponse = response[0]
             else:
+                msgresponse = response
+
+            if msgresponse is False or msgresponse is None:
                 self._fireChatCallbacks(source, message)
-        except Exception as e:
-            log.error(e)
+            else:
+                msgresponse = msgresponse.strip()
+                if msgresponse != "":
+                    if 'ChatRoomID' in source.keys():
+                        self.sendChatMessage(source['ChatRoomID'], msgresponse)
+                    else:
+                        self.sendChatMessage(source['SourceID'], msgresponse)
+        else:
+            self._fireChatCallbacks(source, message)
+        #except Exception as e:
+        #    log.error(e)
 
     def _fireChatCallbacks(self, source, chatmsg):
         for callback in self.chatcallbacks:
