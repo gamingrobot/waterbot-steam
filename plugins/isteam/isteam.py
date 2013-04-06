@@ -20,7 +20,6 @@ class InterfaceSteam:
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
         self.superuser = self.IDtoStr(manager.config.getValue(steamcfg, 'superuser'))
-        print self.superuser
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
@@ -127,7 +126,7 @@ class InterfaceSteam:
         chatroomid = self.IDtoStr(callback.ChatRoomID)
         log.info(chatroomid, chatterid)
         message = callback.Message
-        if str(chatterid) == self.superuser:
+        if chatterid == self.superuser:
             chatperm = Perm.Super
         else:
             chatperm = Perm.User
@@ -138,7 +137,7 @@ class InterfaceSteam:
         if callback.EntryType == EChatEntryType.ChatMsg:
             senderid = self.IDtoStr(callback.Sender)
             message = callback.Message
-            if str(senderid) == self.superuser:
+            if senderid == self.superuser:
                 chatperm = Perm.Super
             else:
                 chatperm = Perm.User
@@ -202,7 +201,7 @@ class InterfaceSteam:
             return "I'm not currently there"
 
     def IDtoStr(self, steamid):
-        return int(SteamID(steamid).ConvertToUInt64())
+        return long(SteamID(steamid).ConvertToUInt64())
 
     def destroy(self, callback):
         self.steamUser.LogOff()
