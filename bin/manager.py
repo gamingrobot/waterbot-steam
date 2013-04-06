@@ -2,6 +2,7 @@ import xml.etree.ElementTree as et
 import sys
 import os
 import importlib
+import traceback
 
 bot_version = "1.0.1"
 
