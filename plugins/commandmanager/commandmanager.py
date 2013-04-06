@@ -13,7 +13,7 @@ class CommandManager:
     def listCommands(self, command, args, source):
         ret = "Available Commands:\n"
         ret += ", ".join(self._commands.keys())
-        return ret
+        return "", ret
 
     def registerCommand(self, command, callback, perm=Perm.User):
         if not command in self._commands:

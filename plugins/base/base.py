@@ -24,4 +24,4 @@ class Base:
         return "", "Restarting WaterBot"
 
     def echoCommand(self, command, args, source):
-        return "", " ".join(args)
+        return " ".join(args)
