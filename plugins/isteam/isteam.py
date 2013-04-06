@@ -6,6 +6,7 @@ from SteamKit2 import *
 import sys
 from threading import Thread
 from bin.shared.perms import Perm
+from bin.shared.commandresponses import CmdResponse
 import traceback
 
 
@@ -137,20 +138,23 @@ class InterfaceSteam:
         try:
             if messagesplit[0] == "wb":
                 response = manager.commandmanager.processCommand(source, messagesplit[1:])
-                if isinstance(response, tuple):
-                    msgresponse = response[0]
-                else:
-                    msgresponse = response
-
-                if msgresponse is False or msgresponse is None:
+                if msgresponse == CmdResponse.Continue or msgresponse is None:
                     self._fireChatCallbacks(source, message)
                 else:
-                    msgresponse = msgresponse.strip()
-                    if msgresponse != "":
-                        if 'ChatRoomID' in source.keys():
-                            self.sendChatRoomMessage(source['ChatRoomID'], msgresponse)
-                        else:
-                            self.sendChatMessage(source['SourceID'], msgresponse)
+                    if isinstance(response, tuple):
+                        chatroomresponse = str(response[0]).strip()
+                        friendresponse = str(response[1]).strip()
+                        if 'ChatRoomID' in source.keys() and chatroomresponse != "":
+                            self.sendChatRoomMessage(source['ChatRoomID'], chatroomresponse)
+                        elif friendresponse != "":
+                            self.sendChatMessage(source['SourceID'], friendresponse)
+                    else:
+                        msgresponse = str(response).strip()
+                        if msgresponse != "":
+                            if 'ChatRoomID' in source.keys():
+                                self.sendChatRoomMessage(source['ChatRoomID'], msgresponse)
+                            else:
+                                self.sendChatMessage(source['SourceID'], msgresponse)
             else:
                 self._fireChatCallbacks(source, message)
         except Exception:
@@ -179,6 +183,7 @@ class InterfaceSteam:
             chatroom = SteamID(room)
             log.info("Disconnecting from room %s" % chatroom)
             self.steamFriends.LeaveChat(chatroom)
+            return "", "Left Room %s" % room
         except:
             return "I'm not currently there"
 

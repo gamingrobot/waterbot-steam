@@ -16,12 +16,12 @@ class Base:
         plugins = manager.getPluginsInfo()
         ret = "List of plugins: \n"
         ret += "\n".join(plugins)
-        return ret, plugins
+        return "", ret
 
     def restartBot(self, command, args, source):
         t = Timer(1, manager.restartBot)
         t.start()
-        return "brb restarting", True
+        return "brb restarting"
 
     def echoCommand(self, command, args, source):
-        return " ".join(args), args
+        return " ".join(args)

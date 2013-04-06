@@ -1,6 +1,7 @@
 import shlex
 import inspect
 from bin.shared.perms import Perm
+from bin.shared.commandresponses import CmdResponse
 
 
 class CommandManager:
@@ -12,7 +13,7 @@ class CommandManager:
     def listCommands(self, command, args, source):
         ret = "Available Commands:\n"
         ret += ", ".join(self._commands.keys())
-        return ret, self._commands.keys()
+        return ret
 
     def registerCommand(self, command, callback, perm=Perm.User):
         if not command in self._commands:
@@ -47,7 +48,7 @@ class CommandManager:
         if command in self._commands:
             return self._commands[command]["callback"](command, args, source)
         else:
-            return False
+            return CmdResponse.Continue
 
     def processCommand(self, source, data):
         src = "%s, %s" % (source['SourceID'], source['SourceRank'])
@@ -72,7 +73,7 @@ class CommandManager:
 
             #fire command
             log.info("command from", src, "COMMAND", cmd, "ARGS", args)
-            result = False
+            result = CmdResponse.Continue
             if cmd in self._commands:
                 if self._commands[cmd]["perm"] <= source['SourceRank']:
                     result = self.fireCommand(cmd, args, source)
