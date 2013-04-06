@@ -19,7 +19,7 @@ class InterfaceSteam:
         self.username = manager.config.getValue(steamcfg, 'username')
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
-        self.superuser = SteamID(manager.config.getValue(steamcfg, 'superuser')).ConvertToUInt64()
+        self.superuser = self.IDtoStr(manager.config.getValue(steamcfg, 'superuser'))
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
@@ -48,6 +48,7 @@ class InterfaceSteam:
         Callback[SteamUser.LoggedOffCallback](self.OnLoggedOff, callbackManager)
 
         Callback[SteamUser.AccountInfoCallback](self.OnAccountInfo, callbackManager)
+        Callback[SteamFriends.ChatEnterCallback](self.OnChatEnter, callbackManager)
         Callback[SteamFriends.ChatMsgCallback](self.OnChatMsg, callbackManager)
         Callback[SteamFriends.FriendMsgCallback](self.OnFriendMsg, callbackManager)
 
@@ -73,7 +74,7 @@ class InterfaceSteam:
         if len(args) >= 1:
             chatroom = int(args[0])
         else:
-            chatroom = int(source['SourceID'].ConvertToUInt64())
+            chatroom = self.IDtoStr(source['SourceID'])
         return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
@@ -114,9 +115,15 @@ class InterfaceSteam:
     def OnAccountInfo(self, callback):
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
+    def OnChatEnter(self, callback):
+        chatroom = self.IDtoStr(callback.ChatID)
+        log.info("Joined Chat %s" % chatroom)
+        print chatroom
+        self.chatrooms.append(chatroom)
+
     def OnChatMsg(self, callback):
-        chatterid = SteamID(callback.ChatterID).ConvertToUInt64()
-        chatroomid = SteamID(callback.ChatRoomID).ConvertToUInt64()
+        chatterid = str(SteamID(callback.ChatterID))
+        chatroomid = str(SteamID(callback.ChatRoomID))
         log.info(chatroomid, chatterid)
         message = callback.Message
         if str(chatterid) == self.superuser:
@@ -128,7 +135,7 @@ class InterfaceSteam:
 
     def OnFriendMsg(self, callback):
         if callback.EntryType == EChatEntryType.ChatMsg:
-            senderid = SteamID(callback.Sender).ConvertToUInt64()
+            senderid = str(SteamID(callback.Sender))
             message = callback.Message
             if str(senderid) == self.superuser:
                 chatperm = Perm.Super
@@ -169,33 +176,32 @@ class InterfaceSteam:
     def registerChatCallback(self, callback):
         self.chatcallbacks.append(callback)
 
-    def sendChatMessage(self, accountid, msg):
+    def sendChatMessage(self, chatid, msg):
         print self.chatrooms
-        print accountid
-        steamid = SteamID(accountid)
-        if steamid.ConvertToUInt64() in self.chatrooms:
+        print chatid
+        steamid = SteamID(chatid)
+        if self.IDtoStr(chatid) in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
             self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
 
     def joinChatRoom(self, room):
         chatroom = SteamID(room)
-        log.info("Connecting to room %s" % chatroom)
+        log.info("Joining room %s" % chatroom)
         self.steamFriends.JoinChat(chatroom)
-        print chatroom.ConvertToUInt64()
-        print chatroom
-        print str(chatroom)
-        self.chatrooms.append(chatroom.ConvertToUInt64())
 
     def leaveChatRoom(self, room):
         try:
             chatroom = SteamID(room)
-            log.info("Disconnecting from room %s" % chatroom)
+            log.info("Disconnecting from room %s" % self.IDtoStr(room))
             self.steamFriends.LeaveChat(chatroom)
-            del self.chatrooms[chatroom.ConvertToUInt64()]
+            del self.chatrooms[self.IDtoStr(room)]
             return "", "Left Room %s" % room
         except:
             return "I'm not currently there"
+
+    def IDtoStr(self, steamid):
+        return str(SteamID(steamid))
 
     def destroy(self, callback):
         self.steamUser.LogOff()
