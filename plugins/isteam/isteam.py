@@ -19,7 +19,7 @@ class InterfaceSteam:
         self.username = manager.config.getValue(steamcfg, 'username')
         #password
         self.password = manager.config.getValue(steamcfg, 'password')
-        self.superuser = SteamID(manager.config.getValue(steamcfg, 'superuser')).AccountID
+        self.superuser = SteamID(manager.config.getValue(steamcfg, 'superuser')).ConvertToUInt64()
 
         manager.commandmanager.registerCommand("joinchat", self.joinChatCommand, perm=Perm.Super)
         manager.commandmanager.registerCommand("leavechat", self.leaveChatCommand, perm=Perm.Super)
@@ -73,7 +73,7 @@ class InterfaceSteam:
         if len(args) >= 1:
             chatroom = int(args[0])
         else:
-            chatroom = int(source['SourceID'].AccountID)
+            chatroom = int(source['SourceID'].ConvertToUInt64())
         return self.leaveChatRoom(chatroom)
 
     def _steamloop(self, callbackManager):
@@ -115,8 +115,8 @@ class InterfaceSteam:
         self.steamFriends.SetPersonaState(EPersonaState.Online)
 
     def OnChatMsg(self, callback):
-        chatterid = SteamID(callback.ChatterID).AccountID
-        chatroomid = SteamID(callback.ChatRoomID).AccountID
+        chatterid = SteamID(callback.ChatterID).ConvertToUInt64()
+        chatroomid = SteamID(callback.ChatRoomID).ConvertToUInt64()
         log.info(chatroomid, chatterid)
         message = callback.Message
         if str(chatterid) == self.superuser:
@@ -128,7 +128,7 @@ class InterfaceSteam:
 
     def OnFriendMsg(self, callback):
         if callback.EntryType == EChatEntryType.ChatMsg:
-            senderid = SteamID(callback.Sender).AccountID
+            senderid = SteamID(callback.Sender).ConvertToUInt64()
             message = callback.Message
             if str(senderid) == self.superuser:
                 chatperm = Perm.Super
@@ -173,7 +173,7 @@ class InterfaceSteam:
         print self.chatrooms
         print accountid
         steamid = SteamID(accountid)
-        if steamid.AccountID in self.chatrooms:
+        if steamid.ConvertToUInt64() in self.chatrooms:
             self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
         else:
             self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, str(msg))
@@ -182,17 +182,17 @@ class InterfaceSteam:
         chatroom = SteamID(room)
         log.info("Connecting to room %s" % chatroom)
         self.steamFriends.JoinChat(chatroom)
-        print chatroom.AccountID
+        print chatroom.ConvertToUInt64()
         print chatroom
         print chatroom.ConvertToUInt64()
-        self.chatrooms.append(chatroom.AccountID)
+        self.chatrooms.append(chatroom.ConvertToUInt64())
 
     def leaveChatRoom(self, room):
         try:
             chatroom = SteamID(room)
             log.info("Disconnecting from room %s" % chatroom)
             self.steamFriends.LeaveChat(chatroom)
-            del self.chatrooms[chatroom.AccountID]
+            del self.chatrooms[chatroom.ConvertToUInt64()]
             return "", "Left Room %s" % room
         except:
             return "I'm not currently there"
