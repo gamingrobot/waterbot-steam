@@ -80,7 +80,7 @@ class InterfaceSteam:
 
     def sendMsgCommand(self, command, args, source):
         steamid = SteamID(args[0])
-        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, str(msg))
+        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, " ".join(args[1:]))
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
@@ -89,7 +89,8 @@ class InterfaceSteam:
     #log happend
     def logCallback(self, logdata, level):
         if level >= log.logtype.warning:
-            self.steamFriends.SendChatMessage(self.superuser, EChatEntryType.ChatMsg, logdata)
+            steamid = SteamID(self.superuser)
+            self.steamFriends.SendChatMessage(steamid, EChatEntryType.ChatMsg, logdata)
 
     #callbacks
     def OnConnected(self, callback):

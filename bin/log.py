@@ -47,7 +47,7 @@ class Log:
         elif loglevel == "manager":
             self.loglevel = self.logtype.manager
 
-        self._log(self._format("info", "log", "Level " + loglevel), self.logtype.warning)
+        self._log(self._format("info", "log", "Level %s" % loglevel), self.logtype.warning)
 
         #err hook
         sys.excepthook = self.excepthook
