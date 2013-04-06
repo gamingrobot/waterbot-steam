@@ -80,7 +80,9 @@ class InterfaceSteam:
 
     def sendMsgCommand(self, command, args, source):
         steamid = SteamID(args[0])
-        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, " ".join(args[1:]))
+        msg = " ".join(args[1:])
+        log.info("sending msg", steamid, msg)
+        self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, msg)
 
     def _steamloop(self, callbackManager):
         while self._isRunning:
