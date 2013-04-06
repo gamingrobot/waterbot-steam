@@ -50,7 +50,7 @@ class Log:
         self._log(self._format("info", "log", "Level %s" % loglevel), self.logtype.warning)
 
         #err hook
-        sys.excepthook = self.excepthook
+        #sys.excepthook = self.excepthook
 
     def _getName(self):
         retmod = "Module"
@@ -94,7 +94,11 @@ class Log:
     #message levels
     def error(self, *message):
         if self.loglevel <= 4:
-            self._log(self._format("error", self._getName(), message), self.logtype.error)
+            errformat = self._format("error", self._getName(), message)
+            self._log(errformat, self.logtype.error)
+            timestamp = datetime.datetime.now().strftime("%m/%d/%Y - %H:%M:%S")
+            logdata = timestamp + "\n" + errformat + "\n"
+            self.fileerr(logdata)
 
     def warning(self, *message):
         if self.loglevel <= 3:

@@ -87,11 +87,14 @@ class Manager(object):
         plugininfo = plugincfg.find('info')
         self._plugins_info[plugin] = {"pluginname": plugininfo.get('name'), "author": plugininfo.get('author')}
         #instance plugin
-        if hasattr(sys.modules[base], "main_class"):
-            inst = sys.modules[base].main_class(plugincfg.find("pluginconfig"))
-        else:
-            log.error("Plugin", plugin, "doesnt have main_class attr, please put main_class = MainClassName in plugin __init__.py")
-            raise AttributeError("Plugin " + plugin + " is missing main_class")
+        try:
+            if hasattr(sys.modules[base], "main_class"):
+                inst = sys.modules[base].main_class(plugincfg.find("pluginconfig"))
+            else:
+                log.error("Plugin", plugin, "doesnt have main_class attr, please put main_class = MainClassName in plugin __init__.py")
+                raise AttributeError("Plugin " + plugin + " is missing main_class")
+        except Exception:
+            log.error("Error in plugin %s __init__ \n %s" % (plugin, traceback.format_exc()))
         #set attr
         if not hasattr(self, plugin):
             setattr(self, plugin, inst)

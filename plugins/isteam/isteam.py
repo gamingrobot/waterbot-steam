@@ -30,7 +30,7 @@ class InterfaceSteam:
         chatroomscfg = steamcfg.find('chatrooms')
         for chatroom in chatroomscfg.findall("room"):
             roomname = str(chatroom.get("name"))
-            roomid = int(chatroom.get("id"))
+            roomid = long(chatroom.get("id"))
             self.cfgchatrooms[roomname] = roomid
 
         self.chatrooms = []
@@ -68,18 +68,18 @@ class InterfaceSteam:
 
     def joinChatCommand(self, command, args, source):
         if len(args) >= 1:
-            self.joinChatRoom(int(args[0]))
+            self.joinChatRoom(long(args[0]))
             return "Connected to %s" % args[0]
 
     def leaveChatCommand(self, command, args, source):
         if len(args) >= 1:
-            chatroom = int(args[0])
+            chatroom = long(args[0])
         else:
             chatroom = self.IDtoLong(source['SourceID'])
         return self.leaveChatRoom(chatroom)
 
     def sendMsgCommand(self, command, args, source):
-        steamid = SteamID(args[0])
+        steamid = SteamID(long(args[0]))
         msg = " ".join(args[1:])
         log.info("sending msg", args, steamid, msg)
         self.steamFriends.SendChatRoomMessage(steamid, EChatEntryType.ChatMsg, msg)
