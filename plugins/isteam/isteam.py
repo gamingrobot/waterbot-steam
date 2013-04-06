@@ -132,13 +132,14 @@ class InterfaceSteam:
         self._processCommand(source, message)
 
     def OnFriendMsg(self, callback):
-        message = callback.Message
-        if str(callback.Sender) == self.superuser:
-            chatperm = Perm.Super
-        else:
-            chatperm = Perm.User
-        source = {'SourceID': callback.Sender, 'SourceRank': chatperm}
-        self._processCommand(source, message)
+        if callback.EntryType == EChatEntryType.ChatMsg:
+            message = callback.Message
+            if str(callback.Sender) == self.superuser:
+                chatperm = Perm.Super
+            else:
+                chatperm = Perm.User
+            source = {'SourceID': callback.Sender, 'SourceRank': chatperm}
+            self._processCommand(source, message)
 
     def _processCommand(self, source, message):
         log.info(source['SourceID'], message)
