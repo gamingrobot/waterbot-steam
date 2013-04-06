@@ -56,10 +56,7 @@ class Log:
         retmod = "Module"
         frame, module, line, function, context, index = inspect.stack()[2]
         try:
-            retmod = inspect.getmodulename(module)
-            if retmod == "ElementTree":
-                frame, module, line, function, context, index = inspect.stack()[1]
-                retmod = inspect.getmodulename(module)
+            retmod = inspect.getmodule(frame.__name__)
         except:
             pass
         return retmod
