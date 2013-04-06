@@ -197,7 +197,7 @@ class InterfaceSteam:
             chatroom = SteamID(room)
             log.info("Disconnecting from room %s" % self.IDtoLong(room))
             self.steamFriends.LeaveChat(chatroom)
-            del self.chatrooms[self.IDtoLong(room)]
+            self.chatrooms.remove(self.IDtoLong(room))
             return "", "Left Room %s" % room
         else:
             return "I'm not currently there"
