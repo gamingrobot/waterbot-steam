@@ -7,5 +7,5 @@ Steam chat bot written in python
 * IronPython 2.7.3
 * SteamKit2 1.3.1
 
-Old Version
+Old Version  
 New version will be written in GO using https://github.com/GamingRobot/steamgo
